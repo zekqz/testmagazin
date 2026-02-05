@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZEKQZSHOP.COM — Кибер-платформа</title>
+  <title>zekqzshop.com — Донат-платформа</title>
   <style>
     /* === КИБЕР-ТЕМА (чёрно-синяя) === */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,9 +31,10 @@
       -webkit-backdrop-filter: blur(10px);
     }
     .header .container { display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 26px; font-weight: 700; color: #00f5ff; text-decoration: none; text-shadow: 0 0 10px rgba(0, 245, 255, 0.3); }
+    .logo { font-size: 26px; font-weight: 700; color: #00f5ff; text-decoration: none; text-shadow: 0 0 10px rgba(0, 245, 255, 0.3); cursor: pointer; }
     .nav a { color: #c0d8ff; margin-left: 30px; text-decoration: none; transition: color 0.3s; }
     .nav a:hover { color: #00f5ff; text-shadow: 0 0 15px rgba(0, 245, 255, 0.5); }
+    .shop-btn { background: linear-gradient(135deg, #00f5ff, #00b3d8); color: #0a0a12; padding: 10px 20px; border: none; border-radius: 50px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
 
     /* Auth Modal */
     .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(5,5,15,0.9); backdrop-filter: blur(10px); }
@@ -45,6 +46,12 @@
     .btn { display: inline-block; background: linear-gradient(135deg, #00f5ff, #00b3d8); color: #0a0a12; padding: 14px 30px; border: none; border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.3s, box-shadow 0.3s; }
     .btn:hover { transform: translateY(-4px); box-shadow: 0 0 30px rgba(0,245,255,0.7); }
 
+    /* Hero Section */
+    .hero { padding: 180px 0 100px; text-align: center; }
+    .hero h1 { font-size: 3.5rem; color: #00f5ff; margin-bottom: 20px; text-shadow: 0 0 20px rgba(0,245,255,0.3); }
+    .hero p { font-size: 1.4rem; color: #a0c0ff; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero .btn { font-size: 1.6rem; padding: 18px 40px; }
+
     /* Dashboard */
     .dashboard { display: none; padding: 80px 0; }
     .user-panel { background-color: rgba(10,10,18,0.7); border: 1px solid rgba(0,245,255,0.1); border-radius: 18px; padding: 40px; margin-bottom: 40px; backdrop-filter: blur(15px); }
@@ -55,8 +62,8 @@
     .info-card p { font-size: 1.4rem; font-weight: 700; }
     .balance-btn { background: linear-gradient(135deg, #6e44ff, #4a22ff); color: white; padding: 12px 25px; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
 
-    /* Shop Section */
-    .shop-section { margin: 60px 0; }
+    /* Shop Section (открывается только в личном кабинете) */
+    .shop-section { display: none; margin: 60px 0; }
     .shop-section h2 { color: #00f5ff; text-align: center; margin-bottom: 40px; text-shadow: 0 0 15px rgba(0,245,255,0.3); }
     .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
     .product-card {
@@ -106,11 +113,12 @@
 
     /* Responsive */
     @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .hero p { font-size: 1.1rem; }
       .shop-grid { grid-template-columns: 1fr; }
       .user-info { flex-direction: column; }
       .modal-content { padding: 30px; }
-      .hero h1 { font-size: 2.2rem; }
-      .hero p { font-size: 1.1rem; }
+      .nav a, .shop-btn { margin-left: 15px; font-size: 14px; }
     }
   </style>
 </head>
@@ -128,6 +136,7 @@
         <a href="#" id="nav-admin" style="display:none;">Админ</a>
         <a href="#" id="nav-dashboard" style="display:none;">Личный кабинет</a>
         <a href="#" id="nav-logout" style="display:none;">Выйти</a>
+        <button class="shop-btn" id="nav-shop">Магазин</button>
       </nav>
     </div>
   </header>
@@ -206,14 +215,6 @@
         </div>
       </div>
 
-      <!-- МАГАЗИН ZEKQZSHOP.COM -->
-      <section class="shop-section">
-        <h2>🏪 ZEKQZSHOP.COM — ЛУЧШИЙ КИБЕР-МАГАЗИН</h2>
-        <div class="shop-grid" id="shop-grid">
-          <!-- Товары генерируются динамически -->
-        </div>
-      </section>
-
       <!-- История покупок -->
       <div class="history-section">
         <h3>🛒 История покупок</h3>
@@ -222,18 +223,29 @@
         </ul>
       </div>
 
-      <!-- Поддержка -->
+      <!-- Поддержка — через ссылку -->
       <div class="support-section">
         <h3>📩 Поддержка</h3>
-        <div class="support-form">
-          <input type="text" id="support-subject" placeholder="Тема обращения" />
-          <textarea id="support-message" placeholder="Опишите вашу проблему"></textarea>
-          <button class="support-btn" id="support-btn">Отправить</button>
+        <p style="color: #a0c0ff; margin-bottom: 25px;">
+          Для получения помощи нажмите кнопку ниже — вы будете перенаправлены в чат с нашей технической поддержкой.
+        </p>
+        <a href="https://t.me/zekqzshophellp_bot" target="_blank" class="btn" style="display: block; width: fit-content; margin: 0 auto;">
+          Обратиться в поддержку
+        </a>
         </div>
-        <h4>Ваши обращения:</h4>
-        <div id="user-support-list">
-          <!-- Динамически заполняется -->
-        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Магазин (открывается только в личном кабинете) -->
+  <div id="shopView" class="shop-section">
+    <div class="container">
+      <h2>🏪 ZEKQZSHOP.COM — ЛУЧШИЙ ИНТЕРНЕТ МАГАЗИН ДЛЯ ПОПОЛНЕНИЯ БАЛАНСА ИГР</h2>
+      <div class="shop-grid" id="shop-grid">
+        <!-- Товары генерируются динамически -->
+      </div>
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="#" class="btn" id="back-to-dashboard">← Вернуться в личный кабинет</a>
       </div>
     </div>
   </div>
@@ -255,31 +267,31 @@
 
     // Товары магазина
     const PRODUCTS = [
-    { id: 1, name: "Профиль Apex Legends (Легендарный)", price: 500, desc: "Аккаунт с 100+ победами, редкими скинами и уровнем 1000." },
-    { id: 2, name: "Скин Neon Ghost для Valorant", price: 350, desc: "Эксклюзивный неоновый скин с анимацией и эффектом глитча." },
-    { id: 3, name: "Steam-аккаунт с 100+ играми", price: 1200, desc: "Аккаунт с лицензионными играми, включая CS2, Elden Ring, Cyberpunk 2077." },
-    { id: 4, name: "Буст до Rank 1 в Valorant", price: 800, desc: "Повышение ранга до Radiant с гарантией." },
-    { id: 5, name: "Паспорт РФ (виртуальный)", price: 2000, desc: "Виртуальный документ для доступа к закрытым зонам в метавселенной." },
-    { id: 6, name: "Ключ от VIP-зоны в The Sandbox", price: 1500, desc: "Доступ к эксклюзивным NFT-событиям и редким лутам." },
-    { id: 7, name: "Скин Cyber Samurai для Fortnite", price: 450, desc: "Уникальный скин с мечом и неоновым теневым эффектом." },
-    { id: 8, name: "Буст на 5000 XP в Call of Duty", price: 600, desc: "Ускорение прокачки до уровня 100 за 1 час." },
-    { id: 9, name: "Привилегия CyberElite на Discord", price: 900, desc: "Роль с доступом к закрытым каналам, ботам и розыгрышам." },
-    { id: 10, name: "Аккаунт GTA 5 Premium (100% чистый)", price: 700, desc: "Аккаунт с 5000000$ и всеми доспехами, машинами и оружием." },
+      { id: 1, name: "Профиль Apex Legends (Легендарный)", price: 500, desc: "Аккаунт с 100+ победами, редкими скинами и уровнем 1000." },
+      { id: 2, name: "Скин Neon Ghost для Valorant", price: 350, desc: "Эксклюзивный неоновый скин с анимацией и эффектом глитча." },
+      { id: 3, name: "Steam-аккаунт с 100+ играми", price: 1200, desc: "Аккаунт с лицензионными играми, включая CS2, Elden Ring, Cyberpunk 2077." },
+      { id: 4, name: "Буст до Rank 1 в Valorant", price: 800, desc: "Повышение ранга до Radiant с гарантией." },
+      { id: 5, name: "Паспорт РФ (виртуальный)", price: 2000, desc: "Виртуальный документ для доступа к закрытым зонам в метавселенной." },
+      { id: 6, name: "Ключ от VIP-зоны в The Sandbox", price: 1500, desc: "Доступ к эксклюзивным NFT-событиям и редким лутам." },
+      { id: 7, name: "Скин Cyber Samurai для Fortnite", price: 450, desc: "Уникальный скин с мечом и неоновым теневым эффектом." },
+      { id: 8, name: "Буст на 5000 XP в Call of Duty", price: 600, desc: "Ускорение прокачки до уровня 100 за 1 час." },
+      { id: 9, name: "Привилегия CyberElite на Discord", price: 900, desc: "Роль с доступом к закрытым каналам, ботам и розыгрышам." },
+      { id: 10, name: "Аккаунт GTA 5 Premium (100% чистый)", price: 700, desc: "Аккаунт с 5000000$ и всеми доспехами, машинами и оружием." },
     ];
 
     // Инициализация
     document.addEventListener('DOMContentLoaded', () => {
-    initStars();
-    loadProducts();
-    checkAuth();
-    loadAdminData();
-    loadUserData();
+      initStars();
+      loadProducts();
+      checkAuth();
+      loadAdminData();
+      loadUserData();
     });
 
     // === АНИМАЦИЯ ЗВЁЗД ===
     function initStars() {
-    const container = document.getElementById('starsContainer');
-    for (let i = 0; i < 100; i++) {
+      const container = document.getElementById('starsContainer');
+      for (let i = 0; i < 100; i++) {
         const star = document.createElement('div');
         star.className = 'star';
         const size = (Math.random() * 2 + 0.5).toFixed(1);
@@ -293,7 +305,7 @@
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
         container.appendChild(star);
-    }
+      }
     }
 
     // === АВТОРИЗАЦИЯ ===
@@ -310,6 +322,7 @@
       document.getElementById('loginModal').style.display = 'block';
       document.getElementById('userDashboard').style.display = 'none';
       document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('shopView').style.display = 'none';
     }
 
     function showDashboard() {
@@ -317,15 +330,18 @@
       document.getElementById('registerModal').style.display = 'none';
       document.getElementById('userDashboard').style.display = 'block';
       document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('shopView').style.display = 'none';
       document.getElementById('nav-login').style.display = 'none';
       document.getElementById('nav-dashboard').style.display = 'inline';
       document.getElementById('nav-logout').style.display = 'inline';
       document.getElementById('nav-admin').style.display = 'inline';
+      document.getElementById('nav-shop').style.display = 'inline';
     }
 
     function showAdminPanel() {
       document.getElementById('adminPanel').style.display = 'block';
       document.getElementById('userDashboard').style.display = 'none';
+      document.getElementById('shopView').style.display = 'none';
       document.getElementById('nav-dashboard').style.display = 'none';
       document.getElementById('nav-admin').style.display = 'none';
       document.getElementById('nav-logout').style.display = 'inline';
@@ -335,10 +351,12 @@
       localStorage.removeItem(CURRENT_USER_KEY);
       document.getElementById('userDashboard').style.display = 'none';
       document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('shopView').style.display = 'none';
       document.getElementById('nav-login').style.display = 'inline';
       document.getElementById('nav-dashboard').style.display = 'none';
       document.getElementById('nav-admin').style.display = 'none';
       document.getElementById('nav-logout').style.display = 'none';
+      document.getElementById('nav-shop').style.display = 'none';
       showLoginModal();
     }
 
@@ -373,6 +391,34 @@
     document.getElementById('nav-logout').addEventListener('click', (e) => {
       e.preventDefault();
       logout();
+    });
+
+    document.getElementById('nav-shop').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!localStorage.getItem(CURRENT_USER_KEY)) {
+        alert('Для доступа к магазину войдите в аккаунт.');
+        showLoginModal();
+        return;
+      }
+      document.getElementById('userDashboard').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('shopView').style.display = 'block';
+    });
+
+    document.getElementById('back-to-dashboard').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('shopView').style.display = 'none';
+      document.getElementById('userDashboard').style.display = 'block';
+    });
+
+    document.querySelector('.logo').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (localStorage.getItem(CURRENT_USER_KEY)) {
+        document.getElementById('shopView').style.display = 'none';
+        document.getElementById('userDashboard').style.display = 'block';
+      } else {
+        showLoginModal();
+      }
     });
 
     document.querySelectorAll('.close').forEach(el => {
@@ -430,46 +476,45 @@
     });
 
     // === ВХОД ===
-document.getElementById('login-btn').addEventListener('click', () => {
-  const username = document.getElementById('login-username').value.trim();
-  const password = document.getElementById('login-password').value.trim();
+    document.getElementById('login-btn').addEventListener('click', () => {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
 
-  if (!username || !password) {
-    alert('Введите ник и пароль.');
-    return;
-  }
+      if (!username || !password) {
+        alert('Введите ник и пароль.');
+        return;
+      }
 
-  // 🔐 СЕКРЕТНЫЙ АДМИН-ДОСТУП: zekqzshop / 159951133221
-  if (username === 'zekqzshop' && password === '159951133221') {
-    const adminUser = {
-      username: 'zekqzshop',
-      balance: 999999,
-      joined: new Date().toISOString(),
-      lastLogin: new Date().toISOString(),
-      history: [],
-      supportTickets: [],
-      isAdmin: true
-    };
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(adminUser));
-    showAdminPanel(); // ← ВХОД ПРЯМО В АДМИН-ПАНЕЛЬ
-    document.getElementById('loginModal').style.display = 'none';
-    return;
-  }
+      // 🔐 СЕКРЕТНЫЙ АДМИН-ДОСТУП: zekqzshop / 159951133221
+      if (username === 'zekqzshop' && password === '159951133221') {
+        const adminUser = {
+          username: 'zekqzshop',
+          balance: 999999,
+          joined: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+          history: [],
+          supportTickets: [],
+          isAdmin: true
+        };
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(adminUser));
+        showAdminPanel();
+        document.getElementById('loginModal').style.display = 'none';
+        return;
+      }
 
-  // Обычный вход через зарегистрированных пользователей
-  const users = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  const user = users.find(u => u.username === username && atob(u.password) === password);
+      // Обычный вход
+      const users = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const user = users.find(u => u.username === username && atob(u.password) === password);
 
-  if (user) {
-    user.lastLogin = new Date().toISOString();
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    showDashboard();
-    document.getElementById('loginModal').style.display = 'none';
-  } else {
-    alert('Неверный ник или пароль.');
-  }
-});
-
+      if (user) {
+        user.lastLogin = new Date().toISOString();
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+        showDashboard();
+        document.getElementById('loginModal').style.display = 'none';
+      } else {
+        alert('Неверный ник или пароль.');
+      }
+    });
 
     // === ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ ===
     function loadUserData() {
@@ -486,11 +531,11 @@ document.getElementById('login-btn').addEventListener('click', () => {
       historyList.innerHTML = '';
       user.history.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = `[${item.date}] ${item.service} — ${item.amount} ⭐`;
+        li.textContent = `[${new Date(item.date).toLocaleString()}] ${item.service} — ${item.amount} ⭐`;
         historyList.appendChild(li);
       });
 
-      // Поддержка
+      // Поддержка — отображаем только историю обращений
       const supportList = document.getElementById('user-support-list');
       supportList.innerHTML = '';
       user.supportTickets.forEach(ticket => {
@@ -561,33 +606,6 @@ document.getElementById('login-btn').addEventListener('click', () => {
       alert(`+${amount} ⭐ добавлено на баланс!`);
     });
 
-    // === ОТПРАВКА ЗАПРОСА В ПОДДЕРЖКУ ===
-    document.getElementById('support-btn').addEventListener('click', () => {
-      const subject = document.getElementById('support-subject').value.trim();
-      const message = document.getElementById('support-message').value.trim();
-
-      if (!subject || !message) {
-        alert('Заполните тему и сообщение.');
-        return;
-      }
-
-      const user = JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
-      const ticket = {
-        subject,
-        message,
-        date: new Date().toISOString(),
-        answered: false
-      };
-
-      user.supportTickets.push(ticket);
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-
-      document.getElementById('support-subject').value = '';
-      document.getElementById('support-message').value = '';
-      loadUserData();
-      alert('Ваш запрос отправлен. Мы ответим в ближайшее время.');
-    });
-
     // === АДМИН-ПАНЕЛЬ ===
     function loadAdminData() {
       const users = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -619,18 +637,6 @@ document.getElementById('login-btn').addEventListener('click', () => {
         });
       });
     }
-
-    // === ПРИМЕР: СТАТЬ АДМИНОМ ===
-    // После регистрации — открой консоль и вставь:
-    /*
-    const users = JSON.parse(localStorage.getItem('cybermarket_users'));
-    const me = users.find(u => u.username === 'твой_ник');
-    if (me) {
-      me.isAdmin = true;
-      localStorage.setItem('cybermarket_users', JSON.stringify(users));
-      alert('Теперь ты админ! Перезагрузи страницу.');
-    }
-    */
   </script>
 </body>
 </html>
